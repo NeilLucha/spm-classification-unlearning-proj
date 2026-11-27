@@ -1,0 +1,1 @@
+Pilot checkpoints (for dataset selection) are stored under results/dataset_selection/cifar10

@@ -1,0 +1,39 @@
+model:
+  target: models.spm_classifier_kmeans.SemiParametricClassifier_KMeans
+  params:
+    encoder_type: resnet18
+    embed_dim: 512
+    num_classes: 200
+    K: 3
+    learning_rate: 0.1
+    pretrained_imagenet: false
+    pretrained_cifar: false
+data:
+  target: cross_dataset_support.tiny_imagenet_datamodule.TinyImageNetDataModule
+  params:
+    data_dir: ./data/tiny-imagenet-200
+    dataset_name: tinyimagenet
+    batch_size: 128
+    model_type: classifier
+    num_classes: 200
+    support_size_train: 256
+    support_size_eval: 4096
+    query_digits: null
+    support_digits: null
+lightning:
+  callbacks:
+    checkpoint_callback:
+      target: pytorch_lightning.callbacks.ModelCheckpoint
+      params:
+        monitor: val_acc
+        mode: max
+        save_top_k: 1
+        save_last: true
+        filename: "best-{epoch:02d}-{val_acc:.2f}"
+        dirpath: "./results/classification/tiny_imagenet_resnet18_kmeans_k3"
+  trainer:
+    max_epochs: 100
+    devices: 1
+    check_val_every_n_epoch: 1
+    log_every_n_steps: 20
+    accelerator: "gpu"

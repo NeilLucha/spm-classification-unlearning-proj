@@ -1,0 +1,24 @@
+{
+    "spm_model_acc": 0.9518,
+    "spm_inference_time": 1.8735731369997666,
+    "retrain_spm_model_acc": 0.9322,
+    "retrain_spm_inference_time": 1.6898047430004226,
+    "ce": 1.5241502523422241,
+    "kl": 0.22093935310840607,
+    "agreement_rate": 93.69999766349792,
+    "retrain_training_time": 0.0,
+    "retain_spm_unl_train_acc_unlearn": 0.9999,
+    "retain_spm_unl_train_acc_rest": 0.99985,
+    "retain_spm_unl_test_acc_unlearn": null,
+    "retain_spm_unl_test_acc_rest": 0.9518,
+    "retain_spm_unl_inference_time": 9.335649319000368,
+    "confidence_svc": 0.9991,
+    "prob_svc": 0.9995,
+    "test_unlearn_prediction_agreement": null,
+    "test_unlearn_kl": null,
+    "test_rest_prediction_agreement": 0.9370999932289124,
+    "test_rest_kl": 0.22093158960342407,
+    "dataset_reduction": {
+        "enabled": false
+    }
+}

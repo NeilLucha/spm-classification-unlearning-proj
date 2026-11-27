@@ -1,0 +1,5 @@
+import torch
+print(torch.cuda.is_available())
+print(torch.cuda.get_device_name(0))
+
+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

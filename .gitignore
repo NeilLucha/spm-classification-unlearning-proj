@@ -1,0 +1,59 @@
+wandb/
+data/
+checkpoints/
+images/
+*.pyc
+__pycache__/
+*.out
+*.pkl
+results/
+cache/
+lightning_logs/
+random_unlearn_idx/
+*.npy
+
+# Python environments and tooling
+.venv/
+venv/
+env/
+.python-version
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+
+# Model/checkpoint artifacts
+*.ckpt
+*.pt
+*.pth
+*.safetensors
+*.onnx
+
+# Logs and system/editor files
+*.log
+.ipynb_checkpoints/
+.DS_Store
+.vscode/
+.idea/
+
+
+# Experiment + Non-Report Checkpoints
+# results/
+
+# Failed Experiments
+support_reduction/
+support_reduction_verification/
+
+# Doesn't work (Initial version of deletion-aware experiment)
+models/spm_classifier_deletion.py
+
+
+# Curves for Report
+CSV_Curves_Report

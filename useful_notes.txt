@@ -1,0 +1,112 @@
+---> NOTE on how to restrict GPU Usage:
+"
+GPU memory limiting is available on training and dataset/evaluation entry points via:
+
+    --gpu-limit-pct 45
+
+The default is 45%, and valid values are from 1 to 100. This sets PyTorch's
+per-process CUDA memory fraction, so it limits memory use even when shared GPU
+resources or other processes are present.
+
+Commands that support this parameter:
+- main.py
+- overfitting_mitigation.train
+- main_retrain.py
+- main_deletion.py
+- main_deletion_run.py
+- scripts/select_dataset.py
+- scripts/compute_el2n_scores.py
+- evaluate.py
+- train.py
+
+Examples:
+
+    PYTHONPATH=. python main.py --config <config.yaml> --gpu-limit-pct 45
+    PYTHONPATH=. python -m overfitting_mitigation.train --config <config.yaml> --mitigation-config <mitigation.yaml> --gpu-limit-pct 60
+    PYTHONPATH=. python scripts/select_dataset.py --config <config.yaml> --gpu-limit-pct 45
+"
+
+
+
+
+
+---> NOTE on running training on CIFAR 100, ImageNet and Tiny ImageNet:
+This cross-dataset functionality is isolated under cross_dataset_support/.
+The dedicated README and commands are in cross_dataset_support/README.md.
+
+Downloading:
+- CIFAR-100: torchvision downloads automatically:
+  PYTHONPATH=. python cross_dataset_support/download_datasets.py cifar100
+- Tiny ImageNet: automatically downloaded/extracted from Stanford's Tiny
+  ImageNet archive:
+  PYTHONPATH=. python cross_dataset_support/download_datasets.py tiny-imagenet
+- Full ImageNet: download manually (the Kaggle ILSVRC archive or an existing
+  authorized copy). Place the train/val layout under ./data/imagenet:
+  ./data/imagenet/train/<synset>/<images>
+  ./data/imagenet/val/<synset>/<images>
+  Verify it with:
+  PYTHONPATH=. python cross_dataset_support/download_datasets.py imagenet \
+    --imagenet-dir ./data/imagenet
+
+Dedicated configs:
+- CIFAR-100 standard:
+  cross_dataset_support/configs/cifar100_resnet18.yaml
+- CIFAR-100 K-means:
+  cross_dataset_support/configs/cifar100_resnet18_kmeans_k1.yaml
+- Tiny ImageNet standard:
+  cross_dataset_support/configs/tiny_imagenet_resnet18.yaml
+- Tiny ImageNet K-means:
+  cross_dataset_support/configs/tiny_imagenet_resnet18_kmeans_k3.yaml
+- Full ImageNet single-GPU:
+  cross_dataset_support/configs/imagenet_resnet18.yaml
+- Full ImageNet K-means single-GPU:
+  cross_dataset_support/configs/imagenet_resnet18_kmeans_k3.yaml
+
+Training examples:
+PYTHONPATH=. python main.py \
+  --config cross_dataset_support/configs/cifar100_resnet18_kmeans_k1.yaml \
+  --seed 7 --gpu-limit-pct 45
+
+PYTHONPATH=. python main.py \
+  --config cross_dataset_support/configs/tiny_imagenet_resnet18_kmeans_k3.yaml \
+  --seed 7 --gpu-limit-pct 45
+
+PYTHONPATH=. python main.py \
+  --config cross_dataset_support/configs/imagenet_resnet18_kmeans_k3.yaml \
+  --seed 7 --gpu-limit-pct 45
+
+The dedicated ImageNet configs request 1 GPU, avoiding the existing 8-GPU
+requirements in config/classification/imagenet_resnet18*.yaml. The 45% default
+GPU limit is suitable for an NVIDIA RTX A4000 16GB; change it explicitly with
+--gpu-limit-pct (1-100).
+
+Random selection:
+PYTHONPATH=. python scripts/select_random.py \
+  --config cross_dataset_support/configs/cifar100_resnet18_kmeans_k1.yaml \
+  --selection-pct 50 --class-wise --seed 7 --gpu-limit-pct 45
+
+Tiny ImageNet random selection:
+PYTHONPATH=. python scripts/select_random.py \
+  --config cross_dataset_support/configs/tiny_imagenet_resnet18_kmeans_k3.yaml \
+  --selection-pct 50 --class-wise --seed 7 --gpu-limit-pct 45
+
+EL2N/K-center selection:
+PYTHONPATH=. python scripts/select_dataset.py \
+  --config cross_dataset_support/configs/tiny_imagenet_resnet18_kmeans_k3.yaml \
+  --train-pilot --pilot-epochs 10 \
+  --kcenter-retention-pct 50 --seed 7 --gpu-limit-pct 45
+
+This works for CIFAR-100 and Tiny ImageNet as well as existing ImageNet
+configs. Final training with a subset:
+PYTHONPATH=. python -m overfitting_mitigation.train \
+  --config cross_dataset_support/configs/cifar100_resnet18_kmeans_k1.yaml \
+  --mitigation-config cross_dataset_support/examples/cifar100_mitigation.yaml \
+  --dataset-reduction --selection-artifact <artifact.json> \
+  --seed 7 --gpu-limit-pct 45
+
+Tiny ImageNet mitigation:
+PYTHONPATH=. python -m overfitting_mitigation.train \
+  --config cross_dataset_support/configs/tiny_imagenet_resnet18_kmeans_k3.yaml \
+  --mitigation-config cross_dataset_support/examples/tiny_imagenet_mitigation.yaml \
+  --dataset-reduction --selection-artifact <artifact.json> \
+  --seed 7 --gpu-limit-pct 45
